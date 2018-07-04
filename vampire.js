@@ -46,17 +46,32 @@ class Vampire {
   // * when comparing Ansel and Andrew, Ansel is the closest common anscestor.
   closestCommonAncestor(vampire) {
     let currVamp = this;
-    if(!currVamp.creator || !vampire.creator){
+    let preVamp = this;
+    if(!currVamp.creator || !vampire.creator || currVamp === vampire){
       return currVamp
     }
 
-    while(vampire.creator && currVamp.creator && vampire.creator !== currVamp.creator){
-      vampire = vampire.creator;
-      currVamp = currVamp.creator;
-      if(!vampire.creator) {
-        return vampire.creator;
-      } else if(!currVamp.creator) {
-        return currVamp.creator;
+    if(currVamp === vampire.creator){
+      return currVamp;
+    } else if (vampire === currVamp.creator) {
+      return vampire;
+    }
+
+    // Nested loop
+    while(vampire.creator){
+      currVamp = preVamp; // preVamp is for storing the state of currvamp before going into the loop
+      if(vampire.creator === preVamp.creator) { // if the creator is the same
+        return vampire.creator
+      } else {
+        currVamp = preVamp.creator; // reset currVamp
+        while(currVamp.creator){ // checking each currVamp with vampire
+          if(vampire.creator === currVamp.creator) {
+            return vampire.creator
+          } else {
+            currVamp = currVamp.creator;
+          }
+        }
+        vampire = vampire.creator;
       }
     }
 
